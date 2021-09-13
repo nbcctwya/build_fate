@@ -1,0 +1,17 @@
+FROM golang:1.17-alpine as builder
+RUN apk add git
+ENV KUBEFATE_VERSION v1.6.0-a
+RUN git clone -b ${KUBEFATE_VERSION} --depth 1  https://github.com/FederatedAI/KubeFATE.git
+WORKDIR /KubeFATE
+RUN go mod download
+RUN go build -a -ldflags '-s' -installsuffix cgo -o kubefate kubefate.go
+
+FROM gcr.io/distroless/static:nonroot
+WORKDIR /
+COPY --from=builder /workspace/kubefate .
+COPY --from=builder /workspace/config.yaml .
+USER nonroot:nonroot
+EXPOSE 8080
+CMD ["service"]
+ENTRYPOINT ["/kubefate"]
+
