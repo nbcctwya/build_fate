@@ -1,0 +1,16 @@
+ARG FATE_VERSION=1.6.0
+#FROM condaforge/miniforge3:4.10.3-5
+#RUN apt-get update && apt-get install --no-install-recommends -y gcc openjdk-11-jre \
+#    && rm -rf /var/lib/apt/lists/*
+FROM openjdk:17-slim-bullseye
+RUN apt-get update && apt-get install --no-install-recommends -y tini \
+    && rm -rf /var/lib/apt/lists/*
+COPY files/ /data/projects/fate/
+COPY start_*.sh requirements.txt/ /
+#RUN pip install -r /requirements.txt && pip cache purge
+#ENV PYTHONPATH /data/projects/fate/eggroll/python
+ENV EGGROLL_HOME /data/projects/fate/eggroll
+WORKDIR /data/projects/fate/eggroll
+ENTRYPOINT ["/usr/bin/tini", "--"]
+CMD ["/bin/sh"]
+
