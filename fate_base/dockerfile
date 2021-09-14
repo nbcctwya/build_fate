@@ -1,10 +1,10 @@
-FROM condaforge/miniforge3:4.10.3-5
-
+FROM centos:7
 ENV FATE_VERSION 1.6.0
-RUN conda info
 WORKDIR /
-#RUN git clone -b v${FATE_VERSION} --depth 1 https://github.com/FederatedAI/FATE.git
+RUN yum -y update && yum -y install git gcc-c++ python3 
+RUN git clone -b v${FATE_VERSION} --depth 1 https://github.com/FederatedAI/FATE.git \
+    && cp -r /FATE/python /data/projects/fate \
+    && rm -rf /FATE
 COPY requirements.txt /
-RUN conda install numpy && conda clean --all --yes
 RUN pip install -r /requirements.txt && pip cache purge
 CMD  ["pip", "list"]

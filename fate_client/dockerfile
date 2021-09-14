@@ -3,11 +3,10 @@ FROM crossflowai/fate_base:${FATE_VERSION}-release
 ENV FATE_VERSION 1.6.0
 WORKDIR /
 RUN git clone -b v${FATE_VERSION} --depth 1 https://github.com/FederatedAI/FATE.git \
-    && cp -r /FATE/examples /
-#RUN conda install jupyter && conda clean --all --yes
+    && mkdir /Examples
 RUN pip install jupyter && pip cache purge
 COPY flow pipeline /usr/local/bin/
 WORKDIR /FATE
 ENV PYTHONPATG /FATE/python
-CMD ["/bin/sh", "-c", "flow init -c conf/service_conf.yaml && pipeline init -c conf/pipeline_conf.yaml && jupyter notebook --ip=0.0.0.0 --port=20000 --allow-root --debug --NotebookApp.notebook_dir='/examples' --no-browser --NotebookApp.token='' --NotebookApp.password=''"]
+CMD ["/bin/sh", "-c", "flow init -c conf/service_conf.yaml && pipeline init -c conf/pipeline_conf.yaml && jupyter notebook --ip=0.0.0.0 --port=20000 --allow-root --debug --NotebookApp.notebook_dir='/Examples' --no-browser --NotebookApp.token='' --NotebookApp.password=''"]
 
