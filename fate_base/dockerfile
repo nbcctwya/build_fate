@@ -3,8 +3,11 @@ FROM condaforge/miniforge3:4.10.3-5
 ENV FATE_VERSION 1.6.0
 RUN conda info
 WORKDIR /
+RUN apt-get -qq update && apt-get -qq -y install gcc \
+    && apt-get -qq -y autoremove && apt-get autoclean \
+    && rm -rf /var/lib/apt/lists/* /var/log/dpkg.log
 #RUN git clone -b v${FATE_VERSION} --depth 1 https://github.com/FederatedAI/FATE.git
 COPY requirements.txt /
-RUN conda install numpy && conda clean --all --yes
+#RUN conda install numpy && conda clean --all --yes
 RUN pip install -r /requirements.txt && pip cache purge
 CMD  ["pip", "list"]
