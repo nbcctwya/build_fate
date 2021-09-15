@@ -1,20 +1,19 @@
 ARG FATE_VERSION=1.6.0
-#FROM condaforge/miniforge3:4.10.3-5
-#RUN apt-get update && apt-get install --no-install-recommends -y gcc openjdk-11-jre \
-#    && rm -rf /var/lib/apt/lists/*
-FROM openjdk:17-slim-bullseye
+FROM crossflowai/fate_base:${FATE_VERSION}-release
+ENV FATE_VERSION 1.6.0
+RUN apt-get -qq update && DEBIAN_FRONTEND=noninteractive apt-get -qq -y install --no-install-recommends openjdk-8-jre \
+    && apt-get -qq -y autoremove && apt-get autoclean \
+    && rm -rf /var/lib/apt/lists/* /var/log/dpkg.log
+RUN if [ "$(uname -m)"=="x86_64" ] ; then \
+      ln -s java-8-openjdk-amd64 /usr/lib/jvm/java-1.8.0-openjdk ; \
+    else \
+      ln -s java-8-openjdk-aarch64 /usr/lib/jvm/java-1.8.0-openjdk ; \
+    fi
 WORKDIR /
-RUN apt-get update && apt-get install --no-install-recommends -y tini \
-    && rm -rf /var/lib/apt/lists/*
 COPY files/ /data/projects/fate/
-RUN git clone -b v${FATE_VERSION} --depth 1 https://github.com/FederatedAI/FATE.git \
-    && cp -r /FATE/python /data/projects/fate \
-    && rm -rf /FATE
 COPY start_*.sh requirements.txt/ /
-#RUN pip install -r /requirements.txt && pip cache purge
-#ENV PYTHONPATH /data/projects/fate/eggroll/python
+ENV PYTHONPATH /data/projects/fate/eggroll/python:/data/projects/fate/python
 ENV EGGROLL_HOME /data/projects/fate/eggroll
 WORKDIR /data/projects/fate/eggroll
 ENTRYPOINT ["/usr/bin/tini", "--"]
 CMD ["/bin/sh"]
-
