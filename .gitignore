@@ -130,3 +130,4 @@ dmypy.json
 fateboard/files/
 
 !eggroll/files/eggroll/lib/
+!serving/files/lib/
