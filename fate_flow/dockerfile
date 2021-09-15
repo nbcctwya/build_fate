@@ -2,9 +2,6 @@ ARG FATE_VERSION=1.6.0
 FROM crossflowai/fate_base:${FATE_VERSION}-release
 ENV FATE_VERSION 1.6.0
 WORKDIR /
-RUN git clone -b v${FATE_VERSION} --depth 1 https://github.com/FederatedAI/FATE.git
-#RUN conda install jupyter && conda clean --all --yes
-WORKDIR /FATE/python
-ENV PYTHONPATG /FATE/python
+WORKDIR /data/projects/fate/python
+ENV PYTHONPATG /data/projects/fate/python
 CMD ["python", "fate_flow/fate_flow_server.py"]
-
